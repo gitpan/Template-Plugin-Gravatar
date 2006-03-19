@@ -1,5 +1,16 @@
 Revision history for Template-Plugin-Gravatar
 
+0.02  Sun Mar 19 10:25:55 PST 2006
+      - Um... considered "beta" I meant (that's what the other docs said).
+      - Changed the paramter joiner from "&amp;" to "&" -- wisely
+        suggested by Darren Chamberlain. Doc changes to reflect it
+        too.
+      - Added tests to check GRAVATAR settings in config and realized
+        I wasn't getting them. Fixed it.
+      - Added tests to check fatals.
+      - Expanded POD quite a bit about settings.
+      - Validating border now too (was already doing rating and size).
+
 0.01  Sat Mar 18 13:22:15 2006
       - First stab. Considered alpha till I get some feedback and
         use testing in.

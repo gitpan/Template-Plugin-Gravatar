@@ -6,6 +6,8 @@ MANIFEST			This list of files
 META.yml
 README
 t/00.load.t
+t/gravatar-config.t
+t/gravatar-error.t
 t/gravatar.t
 t/perlcritic-hold
 t/pod-coverage.t

@@ -1,8 +1,7 @@
 package Template::Plugin::Gravatar;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-use warnings; no warnings 'uninitialized';
 use strict;
 use Carp;
 use Digest::MD5 ();
@@ -10,24 +9,24 @@ use URI::Escape ();
 
 use base "Template::Plugin";
 
-my $Gravatar_Base = 'http://www.gravatar.com/avatar.php';
+my $Gravatar_Base = "http://www.gravatar.com/avatar.php";
 
 
 sub new {
     my ( $class, $context, $instance_args ) = @_;
     $instance_args ||= {};
-    $context->{GRAVATAR} ||= {};
+    my $config = $context->{CONFIG}{GRAVATAR} || {};
     my %args;
 
-    $args{default} = $instance_args->{default} || $context->{GRAVATAR}->{default};
-    $args{size} = $instance_args->{size} || $context->{GRAVATAR}->{size};
-    $args{rating} = $instance_args->{rating} || $context->{GRAVATAR}->{rating};
-    $args{border} = $instance_args->{border} || $context->{GRAVATAR}->{border};
+    $args{default} = $instance_args->{default} || $config->{default};
+    $args{size} = $instance_args->{size} || $config->{size};
+    $args{rating} = $instance_args->{rating} || $config->{rating};
+    $args{border} = $instance_args->{border} || $config->{border};
 
     # overriding the base might be nice for some developers
 
     $args{base} = $instance_args->{base} ||
-        $context->{GRAVATAR}->{base} || $Gravatar_Base;
+        $config->{base} || $Gravatar_Base;
 
     return sub {
         my $args = shift || {};
@@ -35,7 +34,7 @@ sub new {
             %args,
             %{$args}
         };
-        $args->{email} || croak "Cannot generate a Gravatar URI without an email";
+        $args->{email} || croak "Cannot generate a Gravatar URI without an email address";
         if ( $args->{size} ) {
             $args->{size} >= 1 and $args->{size} <= 80
                 or croak "Gravatar size must be 1 .. 80";
@@ -43,6 +42,10 @@ sub new {
         if ( $args->{rating} ) {
             $args->{rating} =~ /\A(?:G|PG|R|X)\Z/
                 or croak "Gravatar rating can only be G, PG, R, or X";
+        }
+        if ( $args->{border} ) {
+            $args->{border} =~ /\A[0-9A-F]{3}(?:[0-9A-F]{3})?\Z/
+                or croak "Border must be a 3 or 6 digit hex number in caps";
         }
         
         $args->{gravatar_id} = Digest::MD5::md5_hex( $args->{email} );
@@ -58,7 +61,7 @@ sub new {
 
         my $uri = join("?",
                        $args->{base},
-                       join("&amp;",
+                       join("&",
                             @pairs
                             )
                        );
@@ -73,18 +76,18 @@ __END__
 
 =head1 NAME
 
-Template::Plugin::Gravatar - (beta software) configurable generation of Gravatar URLs from email addresses.
+Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email addresses.
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 SYNOPSIS
 
  [% USE Gravatar %]
  [% FOR user IN user_list %]
-  <img src="[% Gravatar( email => user.email ) %]"
-    alt="[% user.name %]" />
+  <img src="[% Gravatar( email => user.email ) | html %]"
+    alt="[% user.name | html %]" />
  [% END %]
 
  # OR a mini CGI example
@@ -93,15 +96,15 @@ Template::Plugin::Gravatar - (beta software) configurable generation of Gravatar
  use Template;
 
  my %config = ( # ... your other config stuff
-               GRAVATAR => { default => '/local/image.png',
+               GRAVATAR => { default => "/local/image.png",
                              size => 80,
-                             rating => 'R' },
+                             rating => "R" },
                );
 
  my $tt2 = Template->new(\%config);
 
  my $user = { email => 'whatever@wherever.whichever',
-              rating => 'PG',
+              rating => "PG",
               name => "Manamana",
               size => 75 };
 
@@ -115,8 +118,8 @@ Template::Plugin::Gravatar - (beta software) configurable generation of Gravatar
  __DATA__
  [% USE Gravatar %] 
  [% FILTER html %]
-  <img src="[% Gravatar( user ) %]"
-    alt="[% user.name %]" />
+  <img src="[% Gravatar( user ) | html %]"
+    alt="[% user.name | html %]" />
  [% END %]
 
 =head1 DESCRIPTION
@@ -129,21 +132,28 @@ All of the options supported in Gravatars--default, rating, size, and
 border--can be used here. The gravatar_id is generated from a given
 email.
 
-=head1 INTERFACE 
+=head1 INTERFACE/SETTINGS
 
 =head2 new
 
-Not called directly. Called when you "USE" the plugin. Takes defaults
+Not called directly. Called when you C<USE> the plugin. Takes defaults
 from the template config hash and mixes them with any per template
 defaults. E.g.,
 
  [% USE Gravatar %]
- Use config defaults if any.
+ Use config arguments if any.
 
  [% USE Gravatar(default => '/local/default-image.png') %]
- Mix config defaults, if any, with new ones.
+ Mix config arguments, if any, with new instance arguments.
+
+=head2 Arguments
 
 =over 4
+
+=item email (required)
+
+The key to using Gravatars is a hex hash of the user's email. This is
+generated automatically and sent to gravatar.com as the C<gravatar_id>.
 
 =item default (optional)
 
@@ -153,16 +163,21 @@ corresponding to the given email.
 =item size (optional)
 
 Gravatars are square. Size is 1 through 80 (pixels) and sets the width
-and the height. Default if none is set is 40.
+and the height.
 
 =item rating (optional)
 
 G|PG|R|X. The B<maximum> rating of Gravatar you wish returned. If you
-have a family friendly forum, for example, you might set it to 'G.'
+have a family friendly forum, for example, you might set it to "G."
 
 =item border (optional)
 
 A hex color, e.g. FF00FF or F0F.
+
+=item base (developer override)
+
+This is allowed as a courtesy for the one or two developers who might
+need it. More below.
 
 =item gravatar_id (not allowed)
 
@@ -170,25 +185,85 @@ This is B<not> an option but a generated variable. It is a hash of the
 email address. The reason is it not supported as an optional variable
 is it would allow avatar hijacking.
 
-=item base (developer override)
-
-This is allowed as a courtesy for the one or two developers who might
-need it.
-
 =back
+
+The only argument that must be given when you call the C<Gravatar>
+plugin is the email. Everything else -- rating, default image, border,
+and size -- can be set in three different places: the config, the
+C<USE> call, or the C<Gravatar> call. All three of the following
+produce the same Gravatar URL.
+
+=head2 Settings via config
+
+Used if the entire "site" should rely on one set of defaults.
+
+ use Template;
+ my %config = (
+    GRAVATAR => {
+        default => "/avatar.png",
+        rating => "PG",
+        size => 80,
+    }
+ );
+
+ my $template = <<;
+ [% USE Gravatar %]
+ [% Gravatar(email => 'me@myself.ego') | html %]
+ 
+ my $tt2 = Template->new(\%config);
+ $tt2->process(\$template);
+
+=head2 Settings via instance
+
+Used if a particular template needs its own defaults.
+
+ use Template;
+ my $template = <<;
+ [% USE Gravatar( default => "/avatar.png",
+                  rating => "PG",
+                  size => 80 ) %]
+ [% Gravatar(email => 'me@myself.ego') | html %]
+ 
+ my $tt2 = Template->new();
+ $tt2->process(\$template);
+
+Any other calls with different emails will share the defaults in this
+template.
+
+=head2 Settings in the Gravatar call
+
+Used for per URL control.
+
+ use Template;
+ my $template = <<;
+ [% USE Gravatar %]
+ [% Gravatar(email => 'me@myself.ego',
+             default => "/avatar.png",
+             rating => "PG",
+             size => 80 ) | html %]
+ 
+ my $tt2 = Template->new();
+ $tt2->process(\$template);
+
+=head2 Base URL (for developers only)
+
+You may also override the base URL for retrieving the Gravatars. It's
+set to use the service from www.gravatar.com. I can be overridden in
+the config or the C<USE>.
 
 =head1 DIAGNOSTICS
 
 Email is the only required argument. Croaks without it.
 
-Size and rating are also validated on each call. Croaks if an invalid
-size (like 0 or 100) or rating (like MA or NC-17) is given.
+Size, border, and rating are also validated on each call. Croaks if an
+invalid size (like 0 or 100) or rating (like MA or NC-17) or border
+(like ff0 or FF) is given.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
 No configuration is necessary. You may use the configuration hash of
 your new template to pass default information like the default image
-location for those without Gravatars. You can also set it in the USE
+location for those without Gravatars. You can also set it in the C<USE>
 call per template if needed.
 
 =head1 DEPENDENCIES (SEE ALSO)
@@ -200,8 +275,7 @@ http://www.gravatar.com/
 
 =head1 BUGS AND LIMITATIONS
 
-None known. This is beta software and I'd really appreciate bug
-reports and feature requests via
+None known. I certainly appreciate bug reports and feedback via
 C<bug-template-plugin-gravatar@rt.cpan.org>, or through the web
 interface at L<http://rt.cpan.org/>.
 
@@ -209,12 +283,12 @@ interface at L<http://rt.cpan.org/>.
 
 Ashley Pond V  C<< <ashley@cpan.org> >>
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2006, Ashley Pond V C<< <ashley@cpan.org> >>. All rights reserved.
+Copyright 2006, Ashley Pond V C<< <ashley@cpan.org> >>. All rights reserved.
 
-This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
+This module is free software; you may redistribute it or modify it or
+both under the same terms as Perl itself. See L<perlartistic>.
 
 =head1 DISCLAIMER OF WARRANTY
 
@@ -230,7 +304,7 @@ NECESSARY SERVICING, REPAIR, OR CORRECTION.
 
 IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
 WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE
 LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
 OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
 THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
