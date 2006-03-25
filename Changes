@@ -1,5 +1,8 @@
 Revision history for Template-Plugin-Gravatar
 
+0.03  Sat Mar 25 13:45:15 PST 2006
+      - Couple of POD tweaks.
+
 0.02  Sun Mar 19 10:25:55 PST 2006
       - Um... considered "beta" I meant (that's what the other docs said).
       - Changed the paramter joiner from "&amp;" to "&" -- wisely

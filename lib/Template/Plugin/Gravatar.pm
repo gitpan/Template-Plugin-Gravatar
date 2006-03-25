@@ -1,6 +1,6 @@
 package Template::Plugin::Gravatar;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use strict;
 use Carp;
@@ -14,8 +14,8 @@ my $Gravatar_Base = "http://www.gravatar.com/avatar.php";
 
 sub new {
     my ( $class, $context, $instance_args ) = @_;
-    $instance_args ||= {};
-    my $config = $context->{CONFIG}{GRAVATAR} || {};
+    $instance_args ||= {}; # the USE'd object
+    my $config = $context->{CONFIG}{GRAVATAR} || {}; # from tt config
     my %args;
 
     $args{default} = $instance_args->{default} || $config->{default};
@@ -24,9 +24,8 @@ sub new {
     $args{border} = $instance_args->{border} || $config->{border};
 
     # overriding the base might be nice for some developers
-
-    $args{base} = $instance_args->{base} ||
-        $config->{base} || $Gravatar_Base;
+    $args{base} = $instance_args->{base} || $config->{base} ||
+        $Gravatar_Base;
 
     return sub {
         my $args = shift || {};
@@ -80,47 +79,47 @@ Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email
 
 =head1 VERSION
 
-0.02
+0.03
 
 =head1 SYNOPSIS
 
- [% USE Gravatar %]
- [% FOR user IN user_list %]
-  <img src="[% Gravatar( email => user.email ) | html %]"
-    alt="[% user.name | html %]" />
- [% END %]
+  [% USE Gravatar %]
+  [% FOR user IN user_list %]
+   <img src="[% Gravatar( email => user.email ) | html %]"
+     alt="[% user.name | html %]" />
+  [% END %]
 
- # OR a mini CGI example
- use strict;
- use CGI qw( header start_html end_html );
- use Template;
+  # OR a mini CGI example
+  use strict;
+  use CGI qw( header start_html end_html );
+  use Template;
 
- my %config = ( # ... your other config stuff
-               GRAVATAR => { default => "/local/image.png",
-                             size => 80,
-                             rating => "R" },
-               );
+  my %config = ( # ... your other config stuff
+                GRAVATAR => { default => "/local/image.png",
+                              size => 80,
+                              rating => "R" },
+                );
 
- my $tt2 = Template->new(\%config);
+  my $tt2 = Template->new(\%config);
 
- my $user = { email => 'whatever@wherever.whichever',
-              rating => "PG",
-              name => "Manamana",
-              size => 75 };
+  my $user = { email => 'whatever@wherever.whichever',
+               rating => "PG",
+               name => "Manamana",
+               size => 75 };
 
- print header(), start_html();
+  print header(), start_html();
 
- $tt2->process(\*DATA, { user => $user })
-     or warn $Template::ERROR;
+  $tt2->process(\*DATA, { user => $user })
+      or warn $Template::ERROR;
 
- print end_html();
+  print end_html();
 
- __DATA__
- [% USE Gravatar %] 
- [% FILTER html %]
-  <img src="[% Gravatar( user ) | html %]"
-    alt="[% user.name | html %]" />
- [% END %]
+  __DATA__
+  [% USE Gravatar %] 
+  [% FILTER html %]
+   <img src="[% Gravatar( user ) | html %]"
+     alt="[% user.name | html %]" />
+  [% END %]
 
 =head1 DESCRIPTION
 
@@ -140,11 +139,11 @@ Not called directly. Called when you C<USE> the plugin. Takes defaults
 from the template config hash and mixes them with any per template
 defaults. E.g.,
 
- [% USE Gravatar %]
- Use config arguments if any.
+  [% USE Gravatar %]
+  Use config arguments if any.
 
- [% USE Gravatar(default => '/local/default-image.png') %]
- Mix config arguments, if any, with new instance arguments.
+  [% USE Gravatar(default => '/local/default-image.png') %]
+  Mix config arguments, if any, with new instance arguments.
 
 =head2 Arguments
 
@@ -181,9 +180,9 @@ need it. More below.
 
 =item gravatar_id (not allowed)
 
-This is B<not> an option but a generated variable. It is a hash of the
-email address. The reason is it not supported as an optional variable
-is it would allow avatar hijacking.
+This is B<not> an option but a generated variable. It is an MD5 hex
+hash of the email address. The reason is it not supported as an
+optional variable is it would allow avatar hijacking.
 
 =back
 
@@ -197,35 +196,35 @@ produce the same Gravatar URL.
 
 Used if the entire "site" should rely on one set of defaults.
 
- use Template;
- my %config = (
-    GRAVATAR => {
-        default => "/avatar.png",
-        rating => "PG",
-        size => 80,
-    }
- );
+  use Template;
+  my %config = (
+     GRAVATAR => {
+         default => "/avatar.png",
+         rating => "PG",
+         size => 80,
+     }
+  );
 
- my $template = <<;
- [% USE Gravatar %]
- [% Gravatar(email => 'me@myself.ego') | html %]
- 
- my $tt2 = Template->new(\%config);
- $tt2->process(\$template);
+  my $template = <<;
+  [% USE Gravatar %]
+  [% Gravatar(email => 'me@myself.ego') | html %]
+  
+  my $tt2 = Template->new(\%config);
+  $tt2->process(\$template);
 
 =head2 Settings via instance
 
 Used if a particular template needs its own defaults.
 
- use Template;
- my $template = <<;
- [% USE Gravatar( default => "/avatar.png",
-                  rating => "PG",
-                  size => 80 ) %]
- [% Gravatar(email => 'me@myself.ego') | html %]
- 
- my $tt2 = Template->new();
- $tt2->process(\$template);
+  use Template;
+  my $template = <<;
+  [% USE Gravatar( default => "/avatar.png",
+                   rating => "PG",
+                   size => 80 ) %]
+  [% Gravatar(email => 'me@myself.ego') | html %]
+  
+  my $tt2 = Template->new();
+  $tt2->process(\$template);
 
 Any other calls with different emails will share the defaults in this
 template.
@@ -234,21 +233,21 @@ template.
 
 Used for per URL control.
 
- use Template;
- my $template = <<;
- [% USE Gravatar %]
- [% Gravatar(email => 'me@myself.ego',
-             default => "/avatar.png",
-             rating => "PG",
-             size => 80 ) | html %]
- 
- my $tt2 = Template->new();
- $tt2->process(\$template);
+  use Template;
+  my $template = <<;
+  [% USE Gravatar %]
+  [% Gravatar(email => 'me@myself.ego',
+              default => "/avatar.png",
+              rating => "PG",
+              size => 80 ) | html %]
+  
+  my $tt2 = Template->new();
+  $tt2->process(\$template);
 
 =head2 Base URL (for developers only)
 
 You may also override the base URL for retrieving the Gravatars. It's
-set to use the service from www.gravatar.com. I can be overridden in
+set to use the service from www.gravatar.com. It can be overridden in
 the config or the C<USE>.
 
 =head1 DIAGNOSTICS
@@ -290,25 +289,4 @@ Copyright 2006, Ashley Pond V C<< <ashley@cpan.org> >>. All rights reserved.
 This module is free software; you may redistribute it or modify it or
 both under the same terms as Perl itself. See L<perlartistic>.
 
-=head1 DISCLAIMER OF WARRANTY
-
-BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
-EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
-YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
-NECESSARY SERVICING, REPAIR, OR CORRECTION.
-
-IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE
-LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
-OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
-THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
-SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
+=cut
