@@ -9,8 +9,9 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/Template/Plugin/Gravatar.pm',
     PL_FILES            => {},
     PREREQ_PM => {
-        "Test::More" => 0,
-        "Carp" => 0,
+        "Template"    => 2,
+        "Test::More"  => 0,
+        "Carp"        => 0,
         "Digest::MD5" => 0,
         "URI::Escape" => 0,
     },

@@ -1,6 +1,6 @@
 package Template::Plugin::Gravatar;
 
-our $VERSION = '0.03';
+our $VERSION = "0.04";
 
 use strict;
 use Carp;
@@ -79,7 +79,7 @@ Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email
 
 =head1 VERSION
 
-0.03
+0.04
 
 =head1 SYNOPSIS
 
@@ -95,10 +95,11 @@ Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email
   use Template;
 
   my %config = ( # ... your other config stuff
-                GRAVATAR => { default => "/local/image.png",
+                GRAVATAR => { default => "http://myhost.moo/local/image.png",
                               size => 80,
                               rating => "R" },
                 );
+  # not the "default" must be an absolute URI to work correctly
 
   my $tt2 = Template->new(\%config);
 
@@ -142,7 +143,7 @@ defaults. E.g.,
   [% USE Gravatar %]
   Use config arguments if any.
 
-  [% USE Gravatar(default => '/local/default-image.png') %]
+  [% USE Gravatar(default => 'http://mysite.moo/local/default-image.gif') %]
   Mix config arguments, if any, with new instance arguments.
 
 =head2 Arguments
@@ -156,8 +157,8 @@ generated automatically and sent to gravatar.com as the C<gravatar_id>.
 
 =item default (optional)
 
-The local (any valid image URI) image to use if there is no Gravatar
-corresponding to the given email.
+The local (any valid absolute image URI) image to use if there is no
+Gravatar corresponding to the given email.
 
 =item size (optional)
 
@@ -199,7 +200,7 @@ Used if the entire "site" should rely on one set of defaults.
   use Template;
   my %config = (
      GRAVATAR => {
-         default => "/avatar.png",
+         default => "http://mysite.moo/img/avatar.png",
          rating => "PG",
          size => 80,
      }
@@ -218,8 +219,7 @@ Used if a particular template needs its own defaults.
 
   use Template;
   my $template = <<;
-  [% USE Gravatar( default => "/avatar.png",
-                   rating => "PG",
+  [% USE Gravatar( rating => "PG",
                    size => 80 ) %]
   [% Gravatar(email => 'me@myself.ego') | html %]
   
@@ -237,7 +237,7 @@ Used for per URL control.
   my $template = <<;
   [% USE Gravatar %]
   [% Gravatar(email => 'me@myself.ego',
-              default => "/avatar.png",
+              default => "http://mysite.moo/img/avatar.png",
               rating => "PG",
               size => 80 ) | html %]
   

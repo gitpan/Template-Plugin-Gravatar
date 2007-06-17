@@ -1,5 +1,10 @@
 Revision history for Template-Plugin-Gravatar
 
+0.04  Sun Jun 17 16:38:26 PDT 2007
+      - Fixed a pre-req moment of madness, Template wasn't required
+        and caused failures for builds without it.
+      - POD updates about absolute URIs for "default" images.
+
 0.03  Sat Mar 25 13:45:15 PST 2006
       - Couple of POD tweaks.
 
