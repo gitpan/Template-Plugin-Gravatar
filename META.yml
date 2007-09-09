@@ -1,15 +1,21 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Template-Plugin-Gravatar
-version:      0.04
-version_from: lib/Template/Plugin/Gravatar.pm
-installdirs:  site
-requires:
-    Carp:                          0
-    Digest::MD5:                   0
-    Template:                      2
-    Test::More:                    0
-    URI::Escape:                   0
-
+--- 
+abstract: configurable TT2-based generation of Gravatar URLs from email addresses.
+author: Ashley Pond V  C<< <ashley@cpan.org> >>.
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+generated_by: Module::Install version 0.67
+license: perl
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: Template-Plugin-Gravatar
+no_index: 
+  directory: 
+    - inc
+    - t
+requires: 
+  Carp: 0
+  Digest::MD5: 2.25
+  Template: 2
+  Test::More: 0
+  URI::Escape: 0
+version: 0.05

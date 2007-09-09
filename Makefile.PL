@@ -1,20 +1,16 @@
-use strict;
-use warnings;
-use ExtUtils::MakeMaker;
+use inc::Module::Install;
 
-WriteMakefile(
-    NAME                => 'Template::Plugin::Gravatar',
-    AUTHOR              => 'Ashley Pond V <ashley@cpan.org>',
-    VERSION_FROM        => 'lib/Template/Plugin/Gravatar.pm',
-    ABSTRACT_FROM       => 'lib/Template/Plugin/Gravatar.pm',
-    PL_FILES            => {},
-    PREREQ_PM => {
-        "Template"    => 2,
-        "Test::More"  => 0,
-        "Carp"        => 0,
-        "Digest::MD5" => 0,
-        "URI::Escape" => 0,
-    },
-    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'Template-Plugin-Gravatar-*' },
-);
+name     "Template-Plugin-Gravatar";
+all_from "lib/Template/Plugin/Gravatar.pm";
+
+requires "Test::More";
+requires "Template" => 2;
+requires "Carp";
+requires "Digest::MD5" => 2.25;
+requires "URI::Escape";
+
+auto_install;
+
+WriteAll;
+
+

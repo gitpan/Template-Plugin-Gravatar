@@ -1,4 +1,10 @@
 Revision history for Template-Plugin-Gravatar
+0.05  Sat Sep  8 20:12:24 PDT 2007
+      - Fixed a misspelling.
+      - Fixed 404/broken Gravatar site links.
+      - See also for the new standalone module, Gravatar::URL.
+
+http://www.gravatar.com/implement.php
 
 0.04  Sun Jun 17 16:38:26 PDT 2007
       - Fixed a pre-req moment of madness, Template wasn't required

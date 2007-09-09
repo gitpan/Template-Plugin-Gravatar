@@ -1,16 +1,14 @@
 package Template::Plugin::Gravatar;
+use base "Template::Plugin";
 
-our $VERSION = "0.04";
+our $VERSION = "0.05";
 
 use strict;
 use Carp;
 use Digest::MD5 ();
 use URI::Escape ();
 
-use base "Template::Plugin";
-
 my $Gravatar_Base = "http://www.gravatar.com/avatar.php";
-
 
 sub new {
     my ( $class, $context, $instance_args ) = @_;
@@ -19,9 +17,9 @@ sub new {
     my %args;
 
     $args{default} = $instance_args->{default} || $config->{default};
-    $args{size} = $instance_args->{size} || $config->{size};
     $args{rating} = $instance_args->{rating} || $config->{rating};
     $args{border} = $instance_args->{border} || $config->{border};
+    $args{size} = $instance_args->{size} || $config->{size};
 
     # overriding the base might be nice for some developers
     $args{base} = $instance_args->{base} || $config->{base} ||
@@ -75,11 +73,11 @@ __END__
 
 =head1 NAME
 
-Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email addresses.
+Template::Plugin::Gravatar - configurable TT2-based generation of Gravatar URLs from email addresses.
 
 =head1 VERSION
 
-0.04
+0.05
 
 =head1 SYNOPSIS
 
@@ -99,7 +97,7 @@ Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email
                               size => 80,
                               rating => "R" },
                 );
-  # not the "default" must be an absolute URI to work correctly
+  # note the "default" must be an absolute URI to work correctly
 
   my $tt2 = Template->new(\%config);
 
@@ -124,9 +122,9 @@ Template::Plugin::Gravatar - configurable generation of Gravatar URLs from email
 
 =head1 DESCRIPTION
 
-Please see http://www.gravatar.com/implement.php for more on the
-service interface and http://www.gravatar.com/ for information about
-Gravatars (globally recognized avatars) in general.
+Please see L<http://site.gravatar.com/site/implement> for more on the
+service interface and L<http://site.gravatar.com/> for information
+about Gravatars (globally recognized avatars) in general.
 
 All of the options supported in Gravatars--default, rating, size, and
 border--can be used here. The gravatar_id is generated from a given
@@ -176,7 +174,7 @@ A hex color, e.g. FF00FF or F0F.
 
 =item base (developer override)
 
-This is allowed as a courtesy for the one or two developers who might
+This is provided as a courtesy for the one or two developers who might
 need it. More below.
 
 =item gravatar_id (not allowed)
@@ -280,13 +278,23 @@ interface at L<http://rt.cpan.org/>.
 
 =head1 AUTHOR
 
-Ashley Pond V  C<< <ashley@cpan.org> >>
+Ashley Pond V  C<< <ashley@cpan.org> >>.
 
-=head1 LICENSE AND COPYRIGHT
+=head1 LICENSE
 
-Copyright 2006, Ashley Pond V C<< <ashley@cpan.org> >>. All rights reserved.
+Copyright 2007, Ashley Pond V.
 
-This module is free software; you may redistribute it or modify it or
-both under the same terms as Perl itself. See L<perlartistic>.
+This program is free software; you can redistribute it and modify it
+under the same terms as Perl itself.
+
+See F<http://www.perl.com/perl/misc/Artistic.html>.
+
+=head1 SEE ALSO
+
+L<Gravatar::URL> - standalone Gravatar URL generation.
+
+L<http://www.gravatar.com> - The Gravatar web site.
+
+L<http://site.gravatar.com/site/implement> - The Gravatar URL implementation guide.
 
 =cut
