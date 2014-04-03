@@ -1,5 +1,4 @@
 #!perl
-
 use Template::Test;
 $Template::Test::DEBUG = 1;
 
@@ -28,15 +27,8 @@ Cannot generate a Gravatar URI without an email address
 Gravatar rating can only be G, PG, R, or X
 
 -- test --
-[% USE Gravatar -%]
-[% TRY %][% Gravatar(email => 'x', border => 'GAF') %][% CATCH %][% error.info.replace('\s+at\s.+','') %][% END %]
-
--- expect --
-Border must be a 3 or 6 digit hex number in caps
-
--- test --
-[% USE Gravatar( size => 81 ) -%]
+[% USE Gravatar( size => 2049 ) -%]
 [% TRY %][% Gravatar(email => 'x') %][% CATCH %][% error.info.replace('\s+at\s.+','') %][% END %]
 
 -- expect --
-Gravatar size must be 1 .. 80
+Gravatar size must be 1 .. 2048

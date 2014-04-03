@@ -1,4 +1,9 @@
 Revision history for Template-Plugin-Gravatar
+0.07  Thu Apr  3 12:57:04 PDT 2014
+      - Moved to github.
+      - https://rt.cpan.org/Public/Bug/Display.html?id=93542 - up size
+        limit and take the border out of the tests.
+
 0.06  Thu Oct 15 16:20:42 PDT 2009 
       - Downcased a couple of \Zs.
       - I was looking to base this on Gravatar::URL this time but I'm
@@ -8,7 +13,8 @@ Revision history for Template-Plugin-Gravatar
         when you use them.
       - Fixed broken URIs from Gravatar changing them without redirects.
       - Yes, the date is accurate. I forgot to release it but figure
-        I may as well before I do 0.07 for a bug fix. Uploading 20140403.
+        I may as well before I do 0.07 for a bug fix. Uploading
+        20140403.
 
 0.05  Sat Sep  8 20:12:24 PDT 2007
       - Fixed a misspelling.

@@ -26,4 +26,5 @@ requires:
   URI::Escape: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: '0.06'
+  repository: git://github.com/pangyre/p5-template-plugin-gravatar
+version: '0.07'

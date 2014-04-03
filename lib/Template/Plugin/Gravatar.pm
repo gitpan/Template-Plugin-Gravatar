@@ -6,7 +6,8 @@ use Carp qw( carp croak );
 use URI ();
 use Digest::MD5 ();
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
+our $AUTHORITY = "cpan:ASHLEY";
 our $Gravatar_Base = "http://www.gravatar.com/avatar/";
 
 sub new {
@@ -32,8 +33,8 @@ sub new {
         };
         $args->{email} || croak "Cannot generate a Gravatar URI without an email address";
         if ( $args->{size} ) {
-            $args->{size} >= 1 and $args->{size} <= 80
-                or croak "Gravatar size must be 1 .. 80";
+            $args->{size} >= 1 and $args->{size} <= 2048
+                or croak "Gravatar size must be 1 .. 2048";
         }
         if ( $args->{rating} ) {
             $args->{rating} =~ /\A(?:G|PG|R|X)\z/
@@ -64,7 +65,7 @@ Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs 
 
 =head1 VERSION
 
-0.06
+0.07
 
 =head1 SYNOPSIS
 
@@ -259,8 +260,7 @@ http://www.gravatar.com/
 =head1 BUGS AND LIMITATIONS
 
 None known. I certainly appreciate bug reports and feedback via
-C<bug-template-plugin-gravatar@rt.cpan.org>, or through the web
-interface at L<http://rt.cpan.org/>.
+C<https://github.com/pangyre/p5-template-plugin-gravatar/issues>.
 
 =head1 AUTHOR
 
@@ -268,7 +268,7 @@ Ashley Pond V, C<< <ashley@cpan.org> >>.
 
 =head1 LICENSE
 
-Copyright 2007-2009, Ashley Pond V.
+Copyright 2007-2014, Ashley Pond V.
 
 This program is free software; you can redistribute it and modify it
 under the same terms as Perl itself.

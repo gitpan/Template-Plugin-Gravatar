@@ -7,7 +7,6 @@ my $template_cfg = {
     GRAVATAR => {
         default => "/avatar.jpg",
         rating => "R",
-        border => "BA9",
         size => 50,
     }
 };
