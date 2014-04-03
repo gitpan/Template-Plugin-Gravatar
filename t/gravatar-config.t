@@ -29,21 +29,21 @@ loaded
 [% Gravatar( email => 'whatever@wherever.whichever' ) %]
 
 -- expect --
-http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=R&size=50&default=%2Favatar.jpg&border=BA9
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=R&size=50&default=%2Favatar.jpg
 
 -- test --
 [% USE Gravatar(default => "/local.png") -%]
 [% Gravatar( email => 'whatever@wherever.whichever' ) | html %]
 
 -- expect --
-http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=R&amp;size=50&amp;default=%2Flocal.png&amp;border=BA9
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=R&amp;size=50&amp;default=%2Flocal.png
 
 -- test --
 [% USE Gravatar(default => "/local.png", rating => 'X') -%]
 [% Gravatar( email => 'whatever@wherever.whichever' ) %]
 
 -- expect --
-http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=X&size=50&default=%2Flocal.png&border=BA9
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=X&size=50&default=%2Flocal.png
 
 -- test --
 [% USE Gravatar(default => "/local.png") -%]
@@ -52,7 +52,7 @@ http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&
              size   => 80 ) | html %]
 
 -- expect --
-http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=R&amp;size=80&amp;default=%2Flocal.png&amp;border=BA9
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=R&amp;size=80&amp;default=%2Flocal.png
 
 -- test --
 [% USE Gravatar(default => "/local.png",
@@ -62,4 +62,4 @@ http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&
 [% Gravatar( email => 'whatever@wherever.whichever' ) | html %]
 
 -- expect --
-http://www.gravatar.com/avatar.php?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=PG&amp;size=45&amp;default=%2Flocal.png&amp;border=AAB
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;rating=PG&amp;size=45&amp;default=%2Flocal.png

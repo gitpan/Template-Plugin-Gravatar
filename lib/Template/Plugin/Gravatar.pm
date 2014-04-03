@@ -1,19 +1,18 @@
 package Template::Plugin::Gravatar;
-use base "Template::Plugin";
-
-our $VERSION = "0.05";
-
+use warnings;
 use strict;
-use Carp;
+use base "Template::Plugin";
+use Carp qw( carp croak );
+use URI ();
 use Digest::MD5 ();
-use URI::Escape ();
 
-my $Gravatar_Base = "http://www.gravatar.com/avatar.php";
+our $VERSION = "0.06";
+our $Gravatar_Base = "http://www.gravatar.com/avatar/";
 
 sub new {
     my ( $class, $context, $instance_args ) = @_;
-    $instance_args ||= {}; # the USE'd object
-    my $config = $context->{CONFIG}{GRAVATAR} || {}; # from tt config
+    $instance_args ||= {}; # the USE'd object.
+    my $config = $context->{CONFIG}{GRAVATAR} || {}; # from TT config.
     my %args;
 
     $args{default} = $instance_args->{default} || $config->{default};
@@ -21,7 +20,7 @@ sub new {
     $args{border} = $instance_args->{border} || $config->{border};
     $args{size} = $instance_args->{size} || $config->{size};
 
-    # overriding the base might be nice for some developers
+    # Overriding the base might be nice for some developers.
     $args{base} = $instance_args->{base} || $config->{base} ||
         $Gravatar_Base;
 
@@ -37,32 +36,20 @@ sub new {
                 or croak "Gravatar size must be 1 .. 80";
         }
         if ( $args->{rating} ) {
-            $args->{rating} =~ /\A(?:G|PG|R|X)\Z/
+            $args->{rating} =~ /\A(?:G|PG|R|X)\z/
                 or croak "Gravatar rating can only be G, PG, R, or X";
         }
         if ( $args->{border} ) {
-            $args->{border} =~ /\A[0-9A-F]{3}(?:[0-9A-F]{3})?\Z/
-                or croak "Border must be a 3 or 6 digit hex number in caps";
+            carp "Border is deprecated! Dropping it.";
         }
         
-        $args->{gravatar_id} = Digest::MD5::md5_hex( $args->{email} );
+        $args->{gravatar_id} = Digest::MD5::md5_hex($args->{email});
 
-        $args->{default} = URI::Escape::uri_escape($args->{default})
-            if $args->{default};
-
-        my @pairs;
-        for my $key ( qw( gravatar_id rating size default border ) ) {
-            next unless $args->{$key};
-            push @pairs, join("=", $key, $args->{$key});
-        }
-
-        my $uri = join("?",
-                       $args->{base},
-                       join("&",
-                            @pairs
-                            )
-                       );
-
+        my $uri = URI->new($Gravatar_Base);
+        my @ordered = map { $_, $args->{$_} }
+            grep $args->{$_},
+            qw( gravatar_id rating size default );
+        $uri->query_form(@ordered);
         return $uri;
     }
 }
@@ -73,11 +60,11 @@ __END__
 
 =head1 NAME
 
-Template::Plugin::Gravatar - configurable TT2-based generation of Gravatar URLs from email addresses.
+Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs from email addresses.
 
 =head1 VERSION
 
-0.05
+0.06
 
 =head1 SYNOPSIS
 
@@ -122,12 +109,12 @@ Template::Plugin::Gravatar - configurable TT2-based generation of Gravatar URLs 
 
 =head1 DESCRIPTION
 
-Please see L<http://site.gravatar.com/site/implement> for more on the
-service interface and L<http://site.gravatar.com/> for information
+Please see L<http://gravatar.com/site/implement/url> for more on the
+service interface and L<http://gravatar.com/> for information
 about Gravatars (globally recognized avatars) in general.
 
-All of the options supported in Gravatars--default, rating, size, and
-border--can be used here. The gravatar_id is generated from a given
+All of the options supported in Gravatars--default, rating, and
+size--can be used here. The gravatar_id is generated from a given
 email.
 
 =head1 INTERFACE/SETTINGS
@@ -168,9 +155,9 @@ and the height.
 G|PG|R|X. The B<maximum> rating of Gravatar you wish returned. If you
 have a family friendly forum, for example, you might set it to "G."
 
-=item border (optional)
+=item border (DEPRECATED)
 
-A hex color, e.g. FF00FF or F0F.
+A hex color, e.g. FF00FF or F0F. Gravatar no longer does anything with these so we don't even pass them along. If included they will give a warning.
 
 =item base (developer override)
 
@@ -252,9 +239,8 @@ the config or the C<USE>.
 
 Email is the only required argument. Croaks without it.
 
-Size, border, and rating are also validated on each call. Croaks if an
-invalid size (like 0 or 100) or rating (like MA or NC-17) or border
-(like ff0 or FF) is given.
+Rating and size are also validated on each call. Croaks if an
+invalid size (like 0 or 100) or rating (like MA or NC-17).
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
@@ -278,11 +264,11 @@ interface at L<http://rt.cpan.org/>.
 
 =head1 AUTHOR
 
-Ashley Pond V  C<< <ashley@cpan.org> >>.
+Ashley Pond V, C<< <ashley@cpan.org> >>.
 
 =head1 LICENSE
 
-Copyright 2007, Ashley Pond V.
+Copyright 2007-2009, Ashley Pond V.
 
 This program is free software; you can redistribute it and modify it
 under the same terms as Perl itself.
@@ -293,8 +279,8 @@ See F<http://www.perl.com/perl/misc/Artistic.html>.
 
 L<Gravatar::URL> - standalone Gravatar URL generation.
 
-L<http://www.gravatar.com> - The Gravatar web site.
+L<http://gravatar.com> - The Gravatar web site.
 
-L<http://site.gravatar.com/site/implement> - The Gravatar URL implementation guide.
+L<http://gravatar.com/site/implement/> - The Gravatar URL implementation guide.
 
 =cut
