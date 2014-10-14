@@ -31,6 +31,13 @@ loaded
 http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=R&size=50&default=%2Favatar.jpg
 
 -- test --
+[% USE Gravatar( base => "ftp://moo.cow/go/go") -%]
+[% Gravatar( email => 'whatever@wherever.whichever' ) %]
+
+-- expect --
+ftp://moo.cow/go/go?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&rating=R&size=50&default=%2Favatar.jpg
+
+-- test --
 [% USE Gravatar(default => "/local.png") -%]
 [% Gravatar( email => 'whatever@wherever.whichever' ) | html %]
 

@@ -1,4 +1,8 @@
 Revision history for Template-Plugin-Gravatar
+
+0.08  Tue Oct 14 08:36:52 PDT 2014
+      - Oriol Soriano Vila patch for Base problem; RT#99482.
+
 0.07  Thu Apr  3 12:57:04 PDT 2014
       - Moved to github.
       - https://rt.cpan.org/Public/Bug/Display.html?id=93542 - up size

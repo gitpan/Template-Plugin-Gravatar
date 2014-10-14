@@ -6,7 +6,7 @@ use Carp qw( carp croak );
 use URI ();
 use Digest::MD5 ();
 
-our $VERSION = "0.07";
+our $VERSION = "0.08";
 our $AUTHORITY = "cpan:ASHLEY";
 our $Gravatar_Base = "http://www.gravatar.com/avatar/";
 
@@ -46,7 +46,7 @@ sub new {
         
         $args->{gravatar_id} = Digest::MD5::md5_hex($args->{email});
 
-        my $uri = URI->new($Gravatar_Base);
+        my $uri = URI->new( $args->{base} || $Gravatar_Base );
         my @ordered = map { $_, $args->{$_} }
             grep $args->{$_},
             qw( gravatar_id rating size default );
@@ -59,15 +59,15 @@ sub new {
 
 __END__
 
-=head1 NAME
+=head1 Name
 
 Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs from email addresses.
 
-=head1 VERSION
+=head1 Version
 
-0.07
+0.08
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   [% USE Gravatar %]
   [% FOR user IN user_list %]
@@ -108,7 +108,7 @@ Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs 
      alt="[% user.name | html %]" />
   [% END %]
 
-=head1 DESCRIPTION
+=head1 Description
 
 Please see L<http://gravatar.com/site/implement/url> for more on the
 service interface and L<http://gravatar.com/> for information
@@ -118,7 +118,7 @@ All of the options supported in Gravatars--default, rating, and
 size--can be used here. The gravatar_id is generated from a given
 email.
 
-=head1 INTERFACE/SETTINGS
+=head1 Interface/Settings
 
 =head2 new
 
@@ -236,46 +236,46 @@ You may also override the base URL for retrieving the Gravatars. It's
 set to use the service from www.gravatar.com. It can be overridden in
 the config or the C<USE>.
 
-=head1 DIAGNOSTICS
+=head1 Diagnostics
 
 Email is the only required argument. Croaks without it.
 
 Rating and size are also validated on each call. Croaks if an
 invalid size (like 0 or 100) or rating (like MA or NC-17).
 
-=head1 CONFIGURATION AND ENVIRONMENT
+=head1 Configuration AND ENVIRONMENT
 
 No configuration is necessary. You may use the configuration hash of
 your new template to pass default information like the default image
 location for those without Gravatars. You can also set it in the C<USE>
 call per template if needed.
 
-=head1 DEPENDENCIES (SEE ALSO)
+=head1 Dependencies (see also)
 
 L<Template>, L<Template::Plugin>, L<Carp>, L<Digest::MD5>, and
 L<URI::Escape>.
 
-http://www.gravatar.com/
+L<http://www.gravatar.com/>
 
-=head1 BUGS AND LIMITATIONS
+=head1 Bugs and Limitations
 
 None known. I certainly appreciate bug reports and feedback via
 C<https://github.com/pangyre/p5-template-plugin-gravatar/issues>.
 
-=head1 AUTHOR
+=head1 Author
 
 Ashley Pond V, C<< <ashley@cpan.org> >>.
 
-=head1 LICENSE
+=head1 License
 
 Copyright 2007-2014, Ashley Pond V.
 
 This program is free software; you can redistribute it and modify it
 under the same terms as Perl itself.
 
-See F<http://www.perl.com/perl/misc/Artistic.html>.
+See L<http://www.perl.com/perl/misc/Artistic.html>.
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Gravatar::URL> - standalone Gravatar URL generation.
 
