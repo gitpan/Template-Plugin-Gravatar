@@ -1,5 +1,9 @@
 Revision history for Template-Plugin-Gravatar
 
+0.09  Tue Dec  2 08:25:04 PST 2014
+      - Patch from Cyclenerd to correctly setup email before hashing
+        with trim and lc.
+
 0.08  Tue Oct 14 08:36:52 PDT 2014
       - Oriol Soriano Vila patch for Base problem; RT#99482.
 

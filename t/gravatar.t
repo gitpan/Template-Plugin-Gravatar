@@ -28,6 +28,13 @@ http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8
 http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;default=%2Flocal.png
 
 -- test --
+[%- USE Gravatar(default => "/local.png") -%]
+[% Gravatar( email => ' wHatever@WHEREVER.whichever    ' ) | html %]
+
+-- expect --
+http://www.gravatar.com/avatar/?gravatar_id=a60fc0828e808b9a6a9d50f1792240c8&amp;default=%2Flocal.png
+
+-- test --
 [%- USE Gravatar(default => "/local.png", rating => 'X') -%]
 [% Gravatar( email => 'whatever@wherever.whichever' ) %]
 

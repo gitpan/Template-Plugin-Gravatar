@@ -6,7 +6,7 @@ use Carp qw( carp croak );
 use URI ();
 use Digest::MD5 ();
 
-our $VERSION = "0.08";
+our $VERSION = "0.09";
 our $AUTHORITY = "cpan:ASHLEY";
 our $Gravatar_Base = "http://www.gravatar.com/avatar/";
 
@@ -43,15 +43,18 @@ sub new {
         if ( $args->{border} ) {
             carp "Border is deprecated! Dropping it.";
         }
-        
-        $args->{gravatar_id} = Digest::MD5::md5_hex($args->{email});
+
+        my $email = $args->{email};
+        s/\A\s+//, s/\s+\z// for $email;
+        $email = lc $email; # Might need to consider charset here or document consideration...
+        $args->{gravatar_id} = Digest::MD5::md5_hex($email);
 
         my $uri = URI->new( $args->{base} || $Gravatar_Base );
         my @ordered = map { $_, $args->{$_} }
             grep $args->{$_},
             qw( gravatar_id rating size default );
         $uri->query_form(@ordered);
-        return $uri;
+        $uri;
     }
 }
 
@@ -62,10 +65,6 @@ __END__
 =head1 Name
 
 Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs from email addresses.
-
-=head1 Version
-
-0.08
 
 =head1 Synopsis
 
@@ -102,7 +101,7 @@ Template::Plugin::Gravatar - Configurable TT2-based generation of Gravatar URLs 
   print end_html();
 
   __DATA__
-  [% USE Gravatar %] 
+  [% USE Gravatar %]
   [% FILTER html %]
    <img src="[% Gravatar( user ) | html %]"
      alt="[% user.name | html %]" />
